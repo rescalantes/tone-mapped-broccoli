@@ -1,0 +1,6 @@
+HDRApp/dependencies
+HDRApp/build/
+HDRApp/nbproject/private/
+HDRApp/nbproject/private/private.xml
+HDRApp/nbbuild/
+*.log
