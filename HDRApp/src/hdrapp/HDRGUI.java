@@ -8,6 +8,9 @@ package hdrapp;
 import java.util.Enumeration;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import org.opencv.core.Core;
 
 /**
  *
@@ -16,11 +19,17 @@ import javax.swing.ButtonGroup;
  */
 public class HDRGUI extends javax.swing.JFrame {
 
+    private final JFileChooser fcOpenPic;
+
     /**
      * Creates new form HDRGUI
      */
     public HDRGUI() {
         initComponents();
+        fcOpenPic = new JFileChooser();
+        FileNameExtensionFilter imagesFilter = new FileNameExtensionFilter("Imágenes: *.bmp, *.jpg, *.png", "bmp", "jpg", "png");
+        fcOpenPic.addChoosableFileFilter(imagesFilter);
+        fcOpenPic.setFileFilter(imagesFilter);
     }
 
     /**
@@ -258,9 +267,9 @@ public class HDRGUI extends javax.swing.JFrame {
     
     
     private void BotonCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonCargarActionPerformed
-        // TODO add your handling code here:
         LoadDialog ld = new LoadDialog(this, true);
         int n = (int)NumeroSecuencia.getValue();
+        ld.setFileChooser(fcOpenPic);
         ld.setChoosers(n);
         ld.setVisible(true);
     }//GEN-LAST:event_BotonCargarActionPerformed
@@ -299,7 +308,7 @@ public class HDRGUI extends javax.swing.JFrame {
         //</editor-fold>
         
         //</editor-fold>
-
+        System.loadLibrary(Core.NATIVE_LIBRARY_NAME);
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(() -> {
             new HDRGUI().setVisible(true);

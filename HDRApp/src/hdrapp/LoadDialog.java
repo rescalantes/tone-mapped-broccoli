@@ -5,21 +5,42 @@
  */
 package hdrapp;
 
+import com.drew.imaging.ImageMetadataReader;
+import com.drew.imaging.ImageProcessingException;
+import com.drew.metadata.Metadata;
+import com.drew.metadata.MetadataException;
+import com.drew.metadata.exif.ExifSubIFDDirectory;
+import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.swing.JFileChooser;
+import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
+
 /**
  *
  * @author Raquel Escalante
  * @author Rafael Vasquez
  */
 public class LoadDialog extends javax.swing.JDialog {
-    private int numSec;
+    private final int numSec;
+    private JFileChooser fcOpen;
+    private Mat[] myImages;
+    private double[] myExpTimes;
 
     /**
      * Creates new form LoadDialog
+     * @param parent
+     * @param modal
      */
     public LoadDialog(java.awt.Frame parent, boolean modal) {
         super(parent, modal);
         initComponents();
         numSec = 3;
+        fcOpen = null;
+        myImages = new Mat[5];
+        myExpTimes = new double[5];
     }
 
     /**
@@ -36,19 +57,19 @@ public class LoadDialog extends javax.swing.JDialog {
         AceptarButton = new javax.swing.JButton();
         SecuenciaScrollPane = new javax.swing.JScrollPane();
         ImgChooser1 = new javax.swing.JPanel();
-        imgLabel1 = new javax.swing.JTextField();
+        imgPath1 = new javax.swing.JTextField();
         OpenImg1 = new javax.swing.JButton();
         ImgChooser2 = new javax.swing.JPanel();
-        imgLabel2 = new javax.swing.JTextField();
+        imgPath2 = new javax.swing.JTextField();
         OpenImg2 = new javax.swing.JButton();
         ImgChooser3 = new javax.swing.JPanel();
-        imgLabel3 = new javax.swing.JTextField();
+        imgPath3 = new javax.swing.JTextField();
         OpenImg3 = new javax.swing.JButton();
         ImgChooser4 = new javax.swing.JPanel();
-        imgLabel4 = new javax.swing.JTextField();
+        imgPath4 = new javax.swing.JTextField();
         OpenImg4 = new javax.swing.JButton();
         ImgChooser5 = new javax.swing.JPanel();
-        imgLabel5 = new javax.swing.JTextField();
+        imgPath5 = new javax.swing.JTextField();
         OpenImg5 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
@@ -65,7 +86,7 @@ public class LoadDialog extends javax.swing.JDialog {
             }
         });
 
-        imgLabel1.setText("C:\\Users\\UCV\\Semestre 2017-2\\imagen1.png");
+        imgPath1.setEditable(false);
 
         OpenImg1.setText("Abrir Imagen 1");
         OpenImg1.addActionListener(new java.awt.event.ActionListener() {
@@ -80,7 +101,7 @@ public class LoadDialog extends javax.swing.JDialog {
             ImgChooser1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ImgChooser1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(imgLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(imgPath1, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(OpenImg1)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -90,12 +111,12 @@ public class LoadDialog extends javax.swing.JDialog {
             .addGroup(ImgChooser1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(ImgChooser1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(imgLabel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(imgPath1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(OpenImg1))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        imgLabel2.setText("C:\\Users\\UCV\\Semestre 2017-2\\imagen2.png");
+        imgPath2.setEditable(false);
 
         OpenImg2.setText("Abrir Imagen 2");
         OpenImg2.addActionListener(new java.awt.event.ActionListener() {
@@ -110,7 +131,7 @@ public class LoadDialog extends javax.swing.JDialog {
             ImgChooser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ImgChooser2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(imgLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(imgPath2, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(OpenImg2)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -120,14 +141,19 @@ public class LoadDialog extends javax.swing.JDialog {
             .addGroup(ImgChooser2Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(ImgChooser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(imgLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(imgPath2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(OpenImg2))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        imgLabel3.setText("C:\\Users\\UCV\\Semestre 2017-2\\imagen3.png");
+        imgPath3.setEditable(false);
 
         OpenImg3.setText("Abrir Imagen 3");
+        OpenImg3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                OpenImg3ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout ImgChooser3Layout = new javax.swing.GroupLayout(ImgChooser3);
         ImgChooser3.setLayout(ImgChooser3Layout);
@@ -135,7 +161,7 @@ public class LoadDialog extends javax.swing.JDialog {
             ImgChooser3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ImgChooser3Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(imgLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(imgPath3, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(OpenImg3)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -145,14 +171,19 @@ public class LoadDialog extends javax.swing.JDialog {
             .addGroup(ImgChooser3Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(ImgChooser3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(imgLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(imgPath3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(OpenImg3))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        imgLabel4.setText("C:\\Users\\UCV\\Semestre 2017-2\\imagen4.png");
+        imgPath4.setEditable(false);
 
         OpenImg4.setText("Abrir Imagen 4");
+        OpenImg4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                OpenImg4ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout ImgChooser4Layout = new javax.swing.GroupLayout(ImgChooser4);
         ImgChooser4.setLayout(ImgChooser4Layout);
@@ -160,7 +191,7 @@ public class LoadDialog extends javax.swing.JDialog {
             ImgChooser4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ImgChooser4Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(imgLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(imgPath4, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(OpenImg4)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -170,14 +201,19 @@ public class LoadDialog extends javax.swing.JDialog {
             .addGroup(ImgChooser4Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(ImgChooser4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(imgLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(imgPath4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(OpenImg4))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        imgLabel5.setText("C:\\Users\\UCV\\Semestre 2017-2\\imagen5.png");
+        imgPath5.setEditable(false);
 
         OpenImg5.setText("Abrir Imagen 5");
+        OpenImg5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                OpenImg5ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout ImgChooser5Layout = new javax.swing.GroupLayout(ImgChooser5);
         ImgChooser5.setLayout(ImgChooser5Layout);
@@ -185,7 +221,7 @@ public class LoadDialog extends javax.swing.JDialog {
             ImgChooser5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(ImgChooser5Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(imgLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(imgPath5, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(OpenImg5)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -195,7 +231,7 @@ public class LoadDialog extends javax.swing.JDialog {
             .addGroup(ImgChooser5Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(ImgChooser5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(imgLabel5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(imgPath5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(OpenImg5))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
@@ -252,6 +288,10 @@ public class LoadDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public void setFileChooser(JFileChooser fc){
+        fcOpen = fc;
+    }
+
     public void setChoosers(int n){
         switch (n) {
             case 3:
@@ -265,19 +305,73 @@ public class LoadDialog extends javax.swing.JDialog {
                 break;
         }
     }
-    
+
+    private void updateGUIImagePath(int i, String path){
+        switch(i){
+            case 0:
+                imgPath1.setText(path);
+                break;
+            case 1:
+                imgPath2.setText(path);
+                break;
+            case 2:
+                imgPath3.setText(path);
+                break;
+            case 3:
+                imgPath4.setText(path);
+                break;
+            case 4:
+                imgPath5.setText(path);
+                break;
+        }
+    }
+
+    private void loadIntoMatImage(int i){
+        int returnVal = fcOpen.showOpenDialog(this);
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            try {
+                File file = fcOpen.getSelectedFile();
+                Metadata metadata = ImageMetadataReader.readMetadata(file);
+                ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
+
+                // Filling double with image file EXIF exposure time
+                myExpTimes[i] = directory.getDouble(ExifSubIFDDirectory.TAG_EXPOSURE_TIME);
+                //System.out.println("Exposure time is -> " + eTime);
+
+                // Filling Mat with image file information
+                myImages[i] = Imgcodecs.imread(file.getAbsolutePath());
+
+                // Updating GUI
+                updateGUIImagePath( i, file.getAbsolutePath());
+            } catch (ImageProcessingException | IOException | MetadataException ex) {
+                Logger.getLogger(LoadDialog.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+    }
+
     private void AceptarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AceptarButtonActionPerformed
-        // TODO add your handling code here:
         this.dispose();
     }//GEN-LAST:event_AceptarButtonActionPerformed
 
+    private void OpenImg1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OpenImg1ActionPerformed
+        loadIntoMatImage(0);
+    }//GEN-LAST:event_OpenImg1ActionPerformed
+
     private void OpenImg2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OpenImg2ActionPerformed
-        // TODO add your handling code here:
+        loadIntoMatImage(1);
     }//GEN-LAST:event_OpenImg2ActionPerformed
 
-    private void OpenImg1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OpenImg1ActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_OpenImg1ActionPerformed
+    private void OpenImg3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OpenImg3ActionPerformed
+        loadIntoMatImage(2);
+    }//GEN-LAST:event_OpenImg3ActionPerformed
+
+    private void OpenImg4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OpenImg4ActionPerformed
+        loadIntoMatImage(3);
+    }//GEN-LAST:event_OpenImg4ActionPerformed
+
+    private void OpenImg5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OpenImg5ActionPerformed
+        loadIntoMatImage(4);
+    }//GEN-LAST:event_OpenImg5ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -328,11 +422,11 @@ public class LoadDialog extends javax.swing.JDialog {
     private javax.swing.JButton OpenImg4;
     private javax.swing.JButton OpenImg5;
     private javax.swing.JScrollPane SecuenciaScrollPane;
-    private javax.swing.JTextField imgLabel1;
-    private javax.swing.JTextField imgLabel2;
-    private javax.swing.JTextField imgLabel3;
-    private javax.swing.JTextField imgLabel4;
-    private javax.swing.JTextField imgLabel5;
+    private javax.swing.JTextField imgPath1;
+    private javax.swing.JTextField imgPath2;
+    private javax.swing.JTextField imgPath3;
+    private javax.swing.JTextField imgPath4;
+    private javax.swing.JTextField imgPath5;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel4;
     // End of variables declaration//GEN-END:variables
