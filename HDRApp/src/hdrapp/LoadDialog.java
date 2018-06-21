@@ -40,6 +40,7 @@ public class LoadDialog extends javax.swing.JDialog {
         SecuenciaScrollPane = new javax.swing.JScrollPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
+        setTitle("Cargar imágenes de secuencia");
 
         jLabel2.setText("Instrucciones: Por favor seleccione las imágenes en orden de menor a mayor tiempo de exposición");
 
