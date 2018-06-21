@@ -24,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
+import hdrapp.LoadDialog;
 
 /**
  *
@@ -54,6 +55,8 @@ public class HDRGUI extends javax.swing.JFrame {
         AppPanel = new javax.swing.JPanel();
         BotonCargar = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
+        jLabel2 = new javax.swing.JLabel();
+        NumeroSecuencia = new javax.swing.JSpinner();
         CargaEtiqueta = new javax.swing.JLabel();
         GenerarPanel = new javax.swing.JPanel();
         HDRTradButton = new javax.swing.JRadioButton();
@@ -110,6 +113,8 @@ public class HDRGUI extends javax.swing.JFrame {
             }
         });
 
+        jLabel2.setText("Número de imágenes:");
+
         CargaEtiqueta.setText("Carga de imágenes para procesar:");
 
         HDRSelectionGroup.add(HDRTradButton);
@@ -147,7 +152,7 @@ public class HDRGUI extends javax.swing.JFrame {
         ImgFPanel.setLayout(ImgFPanelLayout);
         ImgFPanelLayout.setHorizontalGroup(
             ImgFPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGap(0, 569, Short.MAX_VALUE)
         );
         ImgFPanelLayout.setVerticalGroup(
             ImgFPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -197,7 +202,13 @@ public class HDRGUI extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(AppPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(AppPanelLayout.createSequentialGroup()
-                        .addComponent(BotonCargar)
+                        .addGroup(AppPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(BotonCargar)
+                            .addGroup(AppPanelLayout.createSequentialGroup()
+                                .addGap(12, 12, 12)
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(NumeroSecuencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                         .addComponent(jScrollPane1))
                     .addComponent(GenerarPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -209,13 +220,19 @@ public class HDRGUI extends javax.swing.JFrame {
             .addGroup(AppPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(CargaEtiqueta)
-                .addGap(5, 5, 5)
                 .addGroup(AppPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(AppPanelLayout.createSequentialGroup()
-                        .addGap(32, 32, 32)
-                        .addComponent(BotonCargar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(18, 18, 18)
+                        .addGap(5, 5, 5)
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AppPanelLayout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(AppPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jLabel2)
+                            .addComponent(NumeroSecuencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(BotonCargar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(37, 37, 37)))
                 .addComponent(GenerarPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
@@ -256,6 +273,8 @@ public class HDRGUI extends javax.swing.JFrame {
     
     private void BotonCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonCargarActionPerformed
         // TODO add your handling code here:
+        LoadDialog ld = new LoadDialog(this, true);
+        ld.setVisible(true);
     }//GEN-LAST:event_BotonCargarActionPerformed
 
     private void ExpFusionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExpFusionButtonActionPerformed
@@ -319,6 +338,8 @@ public class HDRGUI extends javax.swing.JFrame {
     private javax.swing.JRadioButton HDRTradButton;
     private javax.swing.JPanel ImgFPanel;
     private javax.swing.JLabel ModoEtiqueta;
+    private javax.swing.JSpinner NumeroSecuencia;
+    private javax.swing.JLabel jLabel2;
     private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }
