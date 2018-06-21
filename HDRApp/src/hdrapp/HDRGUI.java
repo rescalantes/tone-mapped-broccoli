@@ -5,30 +5,14 @@
  */
 package hdrapp;
 
-import java.awt.Dialog;
-import java.awt.Dimension;
-import java.awt.EventQueue;
-
-import javax.swing.JDialog;
-import java.awt.FlowLayout;
-import java.awt.GridLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.Enumeration;
 import javax.swing.AbstractButton;
-import javax.swing.BoxLayout;
 import javax.swing.ButtonGroup;
-import javax.swing.JButton;
-import javax.swing.JFileChooser;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JRadioButton;
-import hdrapp.LoadDialog;
 
 /**
  *
- * @author escal
+ * @author Raquel Escalante
+ * @author Rafael Vasquez
  */
 public class HDRGUI extends javax.swing.JFrame {
 
@@ -274,6 +258,8 @@ public class HDRGUI extends javax.swing.JFrame {
     private void BotonCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonCargarActionPerformed
         // TODO add your handling code here:
         LoadDialog ld = new LoadDialog(this, true);
+        int n = (int)NumeroSecuencia.getValue();
+        ld.setChoosers(n);
         ld.setVisible(true);
     }//GEN-LAST:event_BotonCargarActionPerformed
 
