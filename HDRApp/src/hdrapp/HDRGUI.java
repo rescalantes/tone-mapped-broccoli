@@ -50,7 +50,7 @@ public class HDRGUI extends javax.swing.JFrame {
         ImgFPanel = new javax.swing.JPanel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-        setTitle("Generador de HDR | Por Rafael Vasquez y Raquel Escalante");
+        setTitle("Generador de imágenes HDR | Por Rafael Vasquez y Raquel Escalante");
 
         BarraEstado.setBorder(javax.swing.BorderFactory.createEtchedBorder());
 

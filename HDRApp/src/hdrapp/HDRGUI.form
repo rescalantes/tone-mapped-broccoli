@@ -7,7 +7,7 @@
   </NonVisualComponents>
   <Properties>
     <Property name="defaultCloseOperation" type="int" value="3"/>
-    <Property name="title" type="java.lang.String" value="Generador de HDR | Por Rafael Vasquez y Raquel Escalante"/>
+    <Property name="title" type="java.lang.String" value="Generador de im&#xe1;genes HDR | Por Rafael Vasquez y Raquel Escalante"/>
   </Properties>
   <SyntheticProperties>
     <SyntheticProperty name="formSizePolicy" type="int" value="1"/>
