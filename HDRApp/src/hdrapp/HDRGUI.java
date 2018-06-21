@@ -99,6 +99,8 @@ public class HDRGUI extends javax.swing.JFrame {
 
         jLabel2.setText("Número de imágenes:");
 
+        NumeroSecuencia.setModel(new javax.swing.SpinnerNumberModel(3, 3, 5, 1));
+
         CargaEtiqueta.setText("Carga de imágenes para procesar:");
 
         HDRSelectionGroup.add(HDRTradButton);
@@ -291,22 +293,16 @@ public class HDRGUI extends javax.swing.JFrame {
                     break;
                 }
             }
-        } catch (ClassNotFoundException ex) {
-            java.util.logging.Logger.getLogger(HDRGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (InstantiationException ex) {
-            java.util.logging.Logger.getLogger(HDRGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (IllegalAccessException ex) {
-            java.util.logging.Logger.getLogger(HDRGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
-        } catch (javax.swing.UnsupportedLookAndFeelException ex) {
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | javax.swing.UnsupportedLookAndFeelException ex) {
             java.util.logging.Logger.getLogger(HDRGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
+        
+        //</editor-fold>
 
         /* Create and display the form */
-        java.awt.EventQueue.invokeLater(new Runnable() {
-            public void run() {
-                new HDRGUI().setVisible(true);
-            }
+        java.awt.EventQueue.invokeLater(() -> {
+            new HDRGUI().setVisible(true);
         });
     }
 
