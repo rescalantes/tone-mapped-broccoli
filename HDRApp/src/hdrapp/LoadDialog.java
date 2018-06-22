@@ -10,11 +10,17 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
+import java.awt.Container;
+import java.awt.GridLayout;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 
@@ -28,7 +34,7 @@ public class LoadDialog extends javax.swing.JDialog {
     private JFileChooser fcOpen;
     private Mat[] myImages;
     private double[] myExpTimes;
-
+    
     /**
      * Creates new form LoadDialog
      * @param parent
@@ -39,8 +45,8 @@ public class LoadDialog extends javax.swing.JDialog {
         initComponents();
         numSec = 3;
         fcOpen = null;
-        myImages = new Mat[5];
-        myExpTimes = new double[5];
+        myImages = new Mat[]{null, null, null, null, null};
+        myExpTimes = new double[]{0, 0, 0, 0, 0};
     }
 
     /**
@@ -52,39 +58,38 @@ public class LoadDialog extends javax.swing.JDialog {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
-        jLabel2 = new javax.swing.JLabel();
-        jLabel4 = new javax.swing.JLabel();
-        AceptarButton = new javax.swing.JButton();
-        SecuenciaScrollPane = new javax.swing.JScrollPane();
+        InstructionsLabel = new javax.swing.JLabel();
+        SequenceLabel = new javax.swing.JLabel();
         ImgChooser1 = new javax.swing.JPanel();
         imgPath1 = new javax.swing.JTextField();
         OpenImg1 = new javax.swing.JButton();
+        expTime1 = new javax.swing.JTextField();
         ImgChooser2 = new javax.swing.JPanel();
         imgPath2 = new javax.swing.JTextField();
         OpenImg2 = new javax.swing.JButton();
+        expTime2 = new javax.swing.JTextField();
         ImgChooser3 = new javax.swing.JPanel();
         imgPath3 = new javax.swing.JTextField();
         OpenImg3 = new javax.swing.JButton();
+        expTime3 = new javax.swing.JTextField();
         ImgChooser4 = new javax.swing.JPanel();
         imgPath4 = new javax.swing.JTextField();
         OpenImg4 = new javax.swing.JButton();
+        expTime4 = new javax.swing.JTextField();
         ImgChooser5 = new javax.swing.JPanel();
         imgPath5 = new javax.swing.JTextField();
         OpenImg5 = new javax.swing.JButton();
+        expTime5 = new javax.swing.JTextField();
+        expTimesLabel = new javax.swing.JLabel();
+        SecuenciaScrollPane = new javax.swing.JScrollPane();
+        AceptarButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Cargar imágenes de secuencia");
 
-        jLabel2.setText("Instrucciones: Por favor seleccione las imágenes en orden de menor a mayor tiempo de exposición");
+        InstructionsLabel.setText("Instrucciones: Por favor seleccione las imágenes en orden de menor a mayor tiempo de exposición");
 
-        jLabel4.setText("Secuencia:");
-
-        AceptarButton.setText("Aceptar");
-        AceptarButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                AceptarButtonActionPerformed(evt);
-            }
-        });
+        SequenceLabel.setText("Secuencia:");
 
         imgPath1.setEditable(false);
 
@@ -95,6 +100,8 @@ public class LoadDialog extends javax.swing.JDialog {
             }
         });
 
+        expTime1.setEditable(false);
+
         javax.swing.GroupLayout ImgChooser1Layout = new javax.swing.GroupLayout(ImgChooser1);
         ImgChooser1.setLayout(ImgChooser1Layout);
         ImgChooser1Layout.setHorizontalGroup(
@@ -104,7 +111,9 @@ public class LoadDialog extends javax.swing.JDialog {
                 .addComponent(imgPath1, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(OpenImg1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(expTime1, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         ImgChooser1Layout.setVerticalGroup(
             ImgChooser1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -112,7 +121,8 @@ public class LoadDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(ImgChooser1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(imgPath1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(OpenImg1))
+                    .addComponent(OpenImg1)
+                    .addComponent(expTime1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -125,6 +135,8 @@ public class LoadDialog extends javax.swing.JDialog {
             }
         });
 
+        expTime2.setEditable(false);
+
         javax.swing.GroupLayout ImgChooser2Layout = new javax.swing.GroupLayout(ImgChooser2);
         ImgChooser2.setLayout(ImgChooser2Layout);
         ImgChooser2Layout.setHorizontalGroup(
@@ -134,7 +146,9 @@ public class LoadDialog extends javax.swing.JDialog {
                 .addComponent(imgPath2, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(OpenImg2)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(expTime2, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         ImgChooser2Layout.setVerticalGroup(
             ImgChooser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -142,7 +156,8 @@ public class LoadDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(ImgChooser2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(imgPath2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(OpenImg2))
+                    .addComponent(OpenImg2)
+                    .addComponent(expTime2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -155,6 +170,8 @@ public class LoadDialog extends javax.swing.JDialog {
             }
         });
 
+        expTime3.setEditable(false);
+
         javax.swing.GroupLayout ImgChooser3Layout = new javax.swing.GroupLayout(ImgChooser3);
         ImgChooser3.setLayout(ImgChooser3Layout);
         ImgChooser3Layout.setHorizontalGroup(
@@ -164,7 +181,9 @@ public class LoadDialog extends javax.swing.JDialog {
                 .addComponent(imgPath3, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(OpenImg3)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(expTime3, javax.swing.GroupLayout.PREFERRED_SIZE, 96, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         ImgChooser3Layout.setVerticalGroup(
             ImgChooser3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -172,7 +191,8 @@ public class LoadDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(ImgChooser3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(imgPath3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(OpenImg3))
+                    .addComponent(OpenImg3)
+                    .addComponent(expTime3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -185,6 +205,8 @@ public class LoadDialog extends javax.swing.JDialog {
             }
         });
 
+        expTime4.setEditable(false);
+
         javax.swing.GroupLayout ImgChooser4Layout = new javax.swing.GroupLayout(ImgChooser4);
         ImgChooser4.setLayout(ImgChooser4Layout);
         ImgChooser4Layout.setHorizontalGroup(
@@ -194,7 +216,9 @@ public class LoadDialog extends javax.swing.JDialog {
                 .addComponent(imgPath4, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(OpenImg4)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(expTime4, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         ImgChooser4Layout.setVerticalGroup(
             ImgChooser4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -202,7 +226,8 @@ public class LoadDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(ImgChooser4Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(imgPath4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(OpenImg4))
+                    .addComponent(OpenImg4)
+                    .addComponent(expTime4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -215,6 +240,8 @@ public class LoadDialog extends javax.swing.JDialog {
             }
         });
 
+        expTime5.setEditable(false);
+
         javax.swing.GroupLayout ImgChooser5Layout = new javax.swing.GroupLayout(ImgChooser5);
         ImgChooser5.setLayout(ImgChooser5Layout);
         ImgChooser5Layout.setHorizontalGroup(
@@ -224,7 +251,9 @@ public class LoadDialog extends javax.swing.JDialog {
                 .addComponent(imgPath5, javax.swing.GroupLayout.PREFERRED_SIZE, 236, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addComponent(OpenImg5)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 156, Short.MAX_VALUE)
+                .addComponent(expTime5, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         ImgChooser5Layout.setVerticalGroup(
             ImgChooser5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -232,9 +261,19 @@ public class LoadDialog extends javax.swing.JDialog {
                 .addContainerGap()
                 .addGroup(ImgChooser5Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(imgPath5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(OpenImg5))
+                    .addComponent(OpenImg5)
+                    .addComponent(expTime5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
+
+        expTimesLabel.setText("Tiempos de Exposición (Segs.)");
+
+        AceptarButton.setText("Aceptar");
+        AceptarButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AceptarButtonActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -247,25 +286,31 @@ public class LoadDialog extends javax.swing.JDialog {
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel2)
-                            .addComponent(ImgChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(ImgChooser2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(ImgChooser3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(ImgChooser4, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(ImgChooser5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap(234, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                         .addComponent(SecuenciaScrollPane)
-                        .addGap(22, 22, 22))))
+                        .addGap(22, 22, 22))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(SequenceLabel)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(InstructionsLabel)
+                                .addGap(32, 32, 32)
+                                .addComponent(expTimesLabel))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                                .addComponent(ImgChooser5, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(ImgChooser4, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(ImgChooser3, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(ImgChooser2, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                                .addComponent(ImgChooser1, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addGap(25, 25, 25)
-                .addComponent(jLabel2)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(InstructionsLabel)
+                    .addComponent(expTimesLabel))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(ImgChooser1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
@@ -277,7 +322,7 @@ public class LoadDialog extends javax.swing.JDialog {
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(ImgChooser5, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(51, 51, 51)
-                .addComponent(jLabel4)
+                .addComponent(SequenceLabel)
                 .addGap(18, 18, 18)
                 .addComponent(SecuenciaScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -291,7 +336,7 @@ public class LoadDialog extends javax.swing.JDialog {
     public void setFileChooser(JFileChooser fc){
         fcOpen = fc;
     }
-
+    
     public void setChoosers(int n){
         switch (n) {
             case 3:
@@ -305,7 +350,16 @@ public class LoadDialog extends javax.swing.JDialog {
                 break;
         }
     }
-
+    
+    public static BufferedImage mat2Img(Mat in)
+    {
+        BufferedImage out = new BufferedImage(in.width(), in.height(), BufferedImage.TYPE_3BYTE_BGR);
+        byte[] data = ((DataBufferByte) out.getRaster().getDataBuffer()).getData();
+        in.get(0, 0, data);
+        return out;
+    } 
+    
+        
     private void updateGUIImagePath(int i, String path){
         switch(i){
             case 0:
@@ -325,9 +379,30 @@ public class LoadDialog extends javax.swing.JDialog {
                 break;
         }
     }
+    
+    private void updateGUIImageExposureTime(int i, String time){
+        switch(i){
+            case 0:
+                expTime1.setText(time);
+                break;
+            case 1:
+                expTime2.setText(time);
+                break;
+            case 2:
+                expTime3.setText(time);
+                break;
+            case 3:
+                expTime4.setText(time);
+                break;
+            case 4:
+                expTime5.setText(time);
+                break;
+        }
+    }
 
     private void loadIntoMatImage(int i){
         int returnVal = fcOpen.showOpenDialog(this);
+        String expTime = "N/A";
         if (returnVal == JFileChooser.APPROVE_OPTION) {
             try {
                 File file = fcOpen.getSelectedFile();
@@ -335,7 +410,10 @@ public class LoadDialog extends javax.swing.JDialog {
                 ExifSubIFDDirectory directory = metadata.getFirstDirectoryOfType(ExifSubIFDDirectory.class);
 
                 // Filling double with image file EXIF exposure time
-                myExpTimes[i] = directory.getDouble(ExifSubIFDDirectory.TAG_EXPOSURE_TIME);
+                if(directory != null){
+                    myExpTimes[i] = directory.getDouble(ExifSubIFDDirectory.TAG_EXPOSURE_TIME);
+                    expTime = String.format("%.6f", myExpTimes[i]);
+                }
                 //System.out.println("Exposure time is -> " + eTime);
 
                 // Filling Mat with image file information
@@ -343,6 +421,7 @@ public class LoadDialog extends javax.swing.JDialog {
 
                 // Updating GUI
                 updateGUIImagePath( i, file.getAbsolutePath());
+                updateGUIImageExposureTime( i, expTime);
             } catch (ImageProcessingException | IOException | MetadataException ex) {
                 Logger.getLogger(LoadDialog.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -416,18 +495,24 @@ public class LoadDialog extends javax.swing.JDialog {
     private javax.swing.JPanel ImgChooser3;
     private javax.swing.JPanel ImgChooser4;
     private javax.swing.JPanel ImgChooser5;
+    private javax.swing.JLabel InstructionsLabel;
     private javax.swing.JButton OpenImg1;
     private javax.swing.JButton OpenImg2;
     private javax.swing.JButton OpenImg3;
     private javax.swing.JButton OpenImg4;
     private javax.swing.JButton OpenImg5;
     private javax.swing.JScrollPane SecuenciaScrollPane;
+    private javax.swing.JLabel SequenceLabel;
+    private javax.swing.JTextField expTime1;
+    private javax.swing.JTextField expTime2;
+    private javax.swing.JTextField expTime3;
+    private javax.swing.JTextField expTime4;
+    private javax.swing.JTextField expTime5;
+    private javax.swing.JLabel expTimesLabel;
     private javax.swing.JTextField imgPath1;
     private javax.swing.JTextField imgPath2;
     private javax.swing.JTextField imgPath3;
     private javax.swing.JTextField imgPath4;
     private javax.swing.JTextField imgPath5;
-    private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel4;
     // End of variables declaration//GEN-END:variables
 }

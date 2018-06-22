@@ -32,21 +32,27 @@
           <Group type="102" attributes="0">
               <EmptySpace min="20" pref="20" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" attributes="0">
-                      <Group type="103" groupAlignment="0" attributes="0">
-                          <Component id="jLabel4" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="jLabel2" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="ImgChooser1" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="ImgChooser2" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="ImgChooser3" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="ImgChooser4" alignment="0" min="-2" max="-2" attributes="0"/>
-                          <Component id="ImgChooser5" alignment="0" min="-2" max="-2" attributes="0"/>
-                      </Group>
-                      <EmptySpace pref="234" max="32767" attributes="0"/>
-                  </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="SecuenciaScrollPane" max="32767" attributes="0"/>
                       <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
+                  </Group>
+                  <Group type="102" attributes="0">
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Component id="SequenceLabel" alignment="0" min="-2" max="-2" attributes="0"/>
+                          <Group type="102" alignment="0" attributes="0">
+                              <Component id="InstructionsLabel" min="-2" max="-2" attributes="0"/>
+                              <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
+                              <Component id="expTimesLabel" min="-2" max="-2" attributes="0"/>
+                          </Group>
+                          <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
+                              <Component id="ImgChooser5" alignment="0" max="32767" attributes="0"/>
+                              <Component id="ImgChooser4" alignment="0" max="32767" attributes="0"/>
+                              <Component id="ImgChooser3" alignment="0" max="32767" attributes="0"/>
+                              <Component id="ImgChooser2" alignment="0" max="32767" attributes="0"/>
+                              <Component id="ImgChooser1" alignment="0" max="32767" attributes="0"/>
+                          </Group>
+                      </Group>
+                      <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -56,7 +62,10 @@
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
-              <Component id="jLabel2" min="-2" max="-2" attributes="0"/>
+              <Group type="103" groupAlignment="3" attributes="0">
+                  <Component id="InstructionsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+                  <Component id="expTimesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
+              </Group>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="ImgChooser1" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -68,7 +77,7 @@
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="ImgChooser5" min="-2" max="-2" attributes="0"/>
               <EmptySpace min="-2" pref="51" max="-2" attributes="0"/>
-              <Component id="jLabel4" min="-2" max="-2" attributes="0"/>
+              <Component id="SequenceLabel" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
               <Component id="SecuenciaScrollPane" min="-2" pref="128" max="-2" attributes="0"/>
               <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -79,28 +88,16 @@
     </DimensionLayout>
   </Layout>
   <SubComponents>
-    <Component class="javax.swing.JLabel" name="jLabel2">
+    <Component class="javax.swing.JLabel" name="InstructionsLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Instrucciones: Por favor seleccione las im&#xe1;genes en orden de menor a mayor tiempo de exposici&#xf3;n"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JLabel" name="jLabel4">
+    <Component class="javax.swing.JLabel" name="SequenceLabel">
       <Properties>
         <Property name="text" type="java.lang.String" value="Secuencia:"/>
       </Properties>
     </Component>
-    <Component class="javax.swing.JButton" name="AceptarButton">
-      <Properties>
-        <Property name="text" type="java.lang.String" value="Aceptar"/>
-      </Properties>
-      <Events>
-        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="AceptarButtonActionPerformed"/>
-      </Events>
-    </Component>
-    <Container class="javax.swing.JScrollPane" name="SecuenciaScrollPane">
-
-      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
-    </Container>
     <Container class="javax.swing.JPanel" name="ImgChooser1">
 
       <Layout>
@@ -112,6 +109,8 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="OpenImg1" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
+                  <Component id="expTime1" min="-2" pref="97" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -122,6 +121,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="imgPath1" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="OpenImg1" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="expTime1" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -142,6 +142,11 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="OpenImg1ActionPerformed"/>
           </Events>
         </Component>
+        <Component class="javax.swing.JTextField" name="expTime1">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+          </Properties>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="ImgChooser2">
@@ -155,6 +160,8 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="OpenImg2" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
+                  <Component id="expTime2" min="-2" pref="97" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -165,6 +172,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="imgPath2" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="OpenImg2" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="expTime2" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -185,6 +193,11 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="OpenImg2ActionPerformed"/>
           </Events>
         </Component>
+        <Component class="javax.swing.JTextField" name="expTime2">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+          </Properties>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="ImgChooser3">
@@ -198,6 +211,8 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="OpenImg3" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
+                  <Component id="expTime3" min="-2" pref="96" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -208,6 +223,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="imgPath3" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="OpenImg3" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="expTime3" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -228,6 +244,11 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="OpenImg3ActionPerformed"/>
           </Events>
         </Component>
+        <Component class="javax.swing.JTextField" name="expTime3">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+          </Properties>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="ImgChooser4">
@@ -241,6 +262,8 @@
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="OpenImg4" min="-2" max="-2" attributes="0"/>
                   <EmptySpace max="32767" attributes="0"/>
+                  <Component id="expTime4" min="-2" pref="97" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -251,6 +274,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="imgPath4" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="OpenImg4" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="expTime4" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -271,6 +295,11 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="OpenImg4ActionPerformed"/>
           </Events>
         </Component>
+        <Component class="javax.swing.JTextField" name="expTime4">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+          </Properties>
+        </Component>
       </SubComponents>
     </Container>
     <Container class="javax.swing.JPanel" name="ImgChooser5">
@@ -283,7 +312,9 @@
                   <Component id="imgPath5" min="-2" pref="236" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="OpenImg5" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace pref="156" max="32767" attributes="0"/>
+                  <Component id="expTime5" min="-2" pref="97" max="-2" attributes="0"/>
+                  <EmptySpace max="-2" attributes="0"/>
               </Group>
           </Group>
         </DimensionLayout>
@@ -294,6 +325,7 @@
                   <Group type="103" groupAlignment="3" attributes="0">
                       <Component id="imgPath5" alignment="3" min="-2" max="-2" attributes="0"/>
                       <Component id="OpenImg5" alignment="3" min="-2" max="-2" attributes="0"/>
+                      <Component id="expTime5" alignment="3" min="-2" max="-2" attributes="0"/>
                   </Group>
                   <EmptySpace max="32767" attributes="0"/>
               </Group>
@@ -314,7 +346,29 @@
             <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="OpenImg5ActionPerformed"/>
           </Events>
         </Component>
+        <Component class="javax.swing.JTextField" name="expTime5">
+          <Properties>
+            <Property name="editable" type="boolean" value="false"/>
+          </Properties>
+        </Component>
       </SubComponents>
     </Container>
+    <Component class="javax.swing.JLabel" name="expTimesLabel">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Tiempos de Exposici&#xf3;n (Segs.)"/>
+      </Properties>
+    </Component>
+    <Container class="javax.swing.JScrollPane" name="SecuenciaScrollPane">
+
+      <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
+    </Container>
+    <Component class="javax.swing.JButton" name="AceptarButton">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="Aceptar"/>
+      </Properties>
+      <Events>
+        <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="AceptarButtonActionPerformed"/>
+      </Events>
+    </Component>
   </SubComponents>
 </Form>
