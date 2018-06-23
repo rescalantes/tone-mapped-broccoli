@@ -9,6 +9,7 @@ import java.util.Enumeration;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.opencv.core.Core;
 
@@ -20,7 +21,7 @@ import org.opencv.core.Core;
 public class HDRGUI extends javax.swing.JFrame {
 
     private final JFileChooser fcOpenPic;
-
+    private LoadDialog ld;
     /**
      * Creates new form HDRGUI
      */
@@ -30,6 +31,7 @@ public class HDRGUI extends javax.swing.JFrame {
         FileNameExtensionFilter imagesFilter = new FileNameExtensionFilter("Imágenes: *.bmp, *.jpg, *.png", "bmp", "jpg", "png");
         fcOpenPic.addChoosableFileFilter(imagesFilter);
         fcOpenPic.setFileFilter(imagesFilter);
+        ld = new LoadDialog(this, true);
     }
 
     /**
@@ -47,7 +49,7 @@ public class HDRGUI extends javax.swing.JFrame {
         Estado = new javax.swing.JLabel();
         AppPanel = new javax.swing.JPanel();
         BotonCargar = new javax.swing.JButton();
-        jScrollPane1 = new javax.swing.JScrollPane();
+        SecImagenesScrollPane = new javax.swing.JScrollPane();
         jLabel2 = new javax.swing.JLabel();
         NumeroSecuencia = new javax.swing.JSpinner();
         CargaEtiqueta = new javax.swing.JLabel();
@@ -205,7 +207,7 @@ public class HDRGUI extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(NumeroSecuencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1))
+                        .addComponent(SecImagenesScrollPane))
                     .addComponent(GenerarPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(CargaEtiqueta))
                 .addContainerGap())
@@ -218,7 +220,7 @@ public class HDRGUI extends javax.swing.JFrame {
                 .addGroup(AppPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(AppPanelLayout.createSequentialGroup()
                         .addGap(5, 5, 5)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(SecImagenesScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AppPanelLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
@@ -264,14 +266,17 @@ public class HDRGUI extends javax.swing.JFrame {
         }
         return null;
     }
-    
-    
+
     private void BotonCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonCargarActionPerformed
-        LoadDialog ld = new LoadDialog(this, true);
         int n = (int)NumeroSecuencia.getValue();
         ld.setFileChooser(fcOpenPic);
         ld.setChoosers(n);
+        //Displaying JDialog to load Images
         ld.setVisible(true);
+
+        // Updating the image sequence in the main GUI
+        SecImagenesScrollPane.getViewport().add(ld.getImageSequencePanel());
+        SecImagenesScrollPane.repaint();
     }//GEN-LAST:event_BotonCargarActionPerformed
 
     private void ExpFusionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExpFusionButtonActionPerformed
@@ -330,7 +335,7 @@ public class HDRGUI extends javax.swing.JFrame {
     private javax.swing.JPanel ImgFPanel;
     private javax.swing.JLabel ModoEtiqueta;
     private javax.swing.JSpinner NumeroSecuencia;
+    private javax.swing.JScrollPane SecImagenesScrollPane;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

@@ -10,8 +10,8 @@ import com.drew.imaging.ImageProcessingException;
 import com.drew.metadata.Metadata;
 import com.drew.metadata.MetadataException;
 import com.drew.metadata.exif.ExifSubIFDDirectory;
-import java.awt.Container;
-import java.awt.GridLayout;
+import java.awt.FlowLayout;
+import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
@@ -21,6 +21,7 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 
@@ -30,10 +31,13 @@ import org.opencv.imgcodecs.Imgcodecs;
  * @author Rafael Vasquez
  */
 public class LoadDialog extends javax.swing.JDialog {
-    private final int numSec;
+    private int numSec;
     private JFileChooser fcOpen;
     private Mat[] myImages;
     private double[] myExpTimes;
+    private JLabel imageTestLabel;
+    private JLabel[] imageLabels;
+    private JPanel imagesPanel;
     
     /**
      * Creates new form LoadDialog
@@ -47,6 +51,22 @@ public class LoadDialog extends javax.swing.JDialog {
         fcOpen = null;
         myImages = new Mat[]{null, null, null, null, null};
         myExpTimes = new double[]{0, 0, 0, 0, 0};
+        imageLabels = new JLabel[5];
+        imageLabels[0] = new JLabel();
+        imageLabels[1] = new JLabel();
+        imageLabels[2] = new JLabel();
+        imageLabels[3] = new JLabel();
+        imageLabels[4] = new JLabel();
+        imageTestLabel = new JLabel();
+        imagesPanel = new JPanel();
+        imagesPanel.setLayout(new FlowLayout());
+        imagesPanel.add(imageLabels[0]);
+        imagesPanel.add(imageLabels[1]);
+        imagesPanel.add(imageLabels[2]);
+        imagesPanel.add(imageLabels[3]);
+        imagesPanel.add(imageLabels[4]);
+        imagesPanel.setVisible(true);
+        SecuenciaScrollPane.getViewport().add(imagesPanel);
     }
 
     /**
@@ -338,6 +358,7 @@ public class LoadDialog extends javax.swing.JDialog {
     }
     
     public void setChoosers(int n){
+        numSec = n;
         switch (n) {
             case 3:
                 ImgChooser4.setVisible(false);
@@ -351,15 +372,39 @@ public class LoadDialog extends javax.swing.JDialog {
         }
     }
     
-    public static BufferedImage mat2Img(Mat in)
-    {
+    public static BufferedImage mat2Img(Mat in){
         BufferedImage out = new BufferedImage(in.width(), in.height(), BufferedImage.TYPE_3BYTE_BGR);
         byte[] data = ((DataBufferByte) out.getRaster().getDataBuffer()).getData();
         in.get(0, 0, data);
         return out;
     } 
     
+    public JPanel getImageSequencePanel(){
+        return imagesPanel;
+    }
+
+    private void updateSequenceImageGUI(BufferedImage imgMsc, int i){
+        int mWidth, mHeight;
         
+        mHeight = SecuenciaScrollPane.getHeight() - 16; // 16 is the margin of the scrollPane
+        mWidth = (int)(((double)mHeight / (double)imgMsc.getHeight()) * (double)imgMsc.getWidth());
+
+        BufferedImage myResize = new BufferedImage(mWidth, mHeight, imgMsc.getType());
+        Graphics2D g = myResize.createGraphics();
+        g.drawImage(imgMsc, 0, 0, mWidth, mHeight, null);
+        g.dispose();
+
+        ImageIcon icon = new ImageIcon(myResize);
+        // Adding the ImageIcon to the Label.
+        imageLabels[i].setIcon( icon );
+        //Aligning the image to the center.
+        imageLabels[i].setHorizontalAlignment(JLabel.CENTER);
+        //Adding the label to the Scrolling pane.
+
+        // Repainting the scroll pane to update the changes
+        SecuenciaScrollPane.repaint();
+    }
+
     private void updateGUIImagePath(int i, String path){
         switch(i){
             case 0:
@@ -422,6 +467,9 @@ public class LoadDialog extends javax.swing.JDialog {
                 // Updating GUI
                 updateGUIImagePath( i, file.getAbsolutePath());
                 updateGUIImageExposureTime( i, expTime);
+                BufferedImage myImg = mat2Img(myImages[i]);
+                updateSequenceImageGUI(myImg,i);
+
             } catch (ImageProcessingException | IOException | MetadataException ex) {
                 Logger.getLogger(LoadDialog.class.getName()).log(Level.SEVERE, null, ex);
             }
