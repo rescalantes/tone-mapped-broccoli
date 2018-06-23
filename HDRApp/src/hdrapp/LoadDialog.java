@@ -16,6 +16,8 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.ImageIcon;
@@ -31,13 +33,15 @@ import org.opencv.imgcodecs.Imgcodecs;
  * @author Rafael Vasquez
  */
 public class LoadDialog extends javax.swing.JDialog {
+
+    public List<Mat> myImages;
+
     private int numSec;
     private JFileChooser fcOpen;
-    private Mat[] myImages;
     private double[] myExpTimes;
     private JLabel[] imageLabels;
     private JPanel imagesPanel;
-    
+
     /**
      * Creates new form LoadDialog
      * @param parent
@@ -48,7 +52,13 @@ public class LoadDialog extends javax.swing.JDialog {
         initComponents();
         numSec = 3;
         fcOpen = null;
-        myImages = new Mat[]{null, null, null, null, null};
+
+        myImages = new ArrayList<>();
+        for (int i = 0; i < 5; i++){
+            Mat aux = new Mat();
+            myImages.add(aux);
+        }
+
         myExpTimes = new double[]{0, 0, 0, 0, 0};
         imageLabels = new JLabel[5];
         imageLabels[0] = new JLabel();
@@ -357,16 +367,21 @@ public class LoadDialog extends javax.swing.JDialog {
     
     public void setChoosers(int n){
         numSec = n;
+        while(myImages.size() > n){
+            myImages.remove(myImages.size() - 1);
+        }
+        while(myImages.size() < n){
+            Mat aux = new Mat();
+            myImages.add(aux);
+        }
         switch (n) {
             case 3:
                 ImgChooser4.setVisible(false);
                 imgPath4.setText("");
                 expTime4.setText("");
-                myImages[3] = null;
                 ImgChooser5.setVisible(false);
                 imgPath5.setText("");
                 expTime5.setText("");
-                myImages[4] = null;
                 imageLabels[3].setIcon( null );
                 imageLabels[4].setIcon( null );
                 break;
@@ -375,7 +390,6 @@ public class LoadDialog extends javax.swing.JDialog {
                 ImgChooser5.setVisible(false);
                 imgPath5.setText("");
                 expTime5.setText("");
-                myImages[4] = null;
                 imageLabels[4].setIcon( null );
                 break;
             default:
@@ -385,7 +399,7 @@ public class LoadDialog extends javax.swing.JDialog {
         }
     }
     
-    public static BufferedImage mat2Img(Mat in){
+    private BufferedImage mat2Img(Mat in){
         BufferedImage out = new BufferedImage(in.width(), in.height(), BufferedImage.TYPE_3BYTE_BGR);
         byte[] data = ((DataBufferByte) out.getRaster().getDataBuffer()).getData();
         in.get(0, 0, data);
@@ -480,14 +494,12 @@ public class LoadDialog extends javax.swing.JDialog {
                 //System.out.println("Exposure time is -> " + eTime);
 
                 // Filling Mat with image file information
-                myImages[i] = Imgcodecs.imread(file.getAbsolutePath());
-
+                myImages.set(i, Imgcodecs.imread(file.getAbsolutePath()));
                 // Updating GUI
                 updateGUIImagePath( i, file.getAbsolutePath());
                 updateGUIImageExposureTime( i, expTime);
-                BufferedImage myImg = mat2Img(myImages[i]);
+                BufferedImage myImg = mat2Img(myImages.get(i));
                 updateSequenceImageGUI(myImg,i);
-
             } catch (ImageProcessingException | IOException | MetadataException ex) {
                 Logger.getLogger(LoadDialog.class.getName()).log(Level.SEVERE, null, ex);
             }

@@ -5,14 +5,26 @@
  */
 package hdrapp;
 
+import java.awt.Graphics2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferByte;
 import java.util.Enumeration;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.opencv.core.Core;
+import static org.opencv.core.CvType.*;
+import org.opencv.core.Mat;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.photo.AlignMTB;
+import org.opencv.photo.MergeMertens;
+import org.opencv.photo.Photo;
+import static org.opencv.photo.Photo.createAlignMTB;
 
 /**
  *
@@ -24,6 +36,8 @@ public class HDRGUI extends javax.swing.JFrame {
     private final JFileChooser fcOpenPic;
     private LoadDialog ld;
     private JPanel imgSecPanel;
+    private JLabel HDRImageLabel;
+    private BufferedImage HDRImage;
     /**
      * Creates new form HDRGUI
      */
@@ -35,6 +49,7 @@ public class HDRGUI extends javax.swing.JFrame {
         fcOpenPic.setFileFilter(imagesFilter);
         ld = new LoadDialog(this, true);
         imgSecPanel = null;
+        HDRImageLabel = new JLabel();
     }
 
     /**
@@ -62,6 +77,7 @@ public class HDRGUI extends javax.swing.JFrame {
         GenerarButton = new javax.swing.JButton();
         ModoEtiqueta = new javax.swing.JLabel();
         ImgFPanel = new javax.swing.JPanel();
+        HDRScrollPane = new javax.swing.JScrollPane();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Generador de imágenes HDR | Por Rafael Vasquez y Raquel Escalante");
@@ -121,20 +137,10 @@ public class HDRGUI extends javax.swing.JFrame {
         HDRTradButton.setSelected(true);
         HDRTradButton.setText("HDR Tradicional");
         HDRTradButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        HDRTradButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                HDRTradButtonActionPerformed(evt);
-            }
-        });
 
         HDRSelectionGroup.add(ExpFusionButton);
         ExpFusionButton.setText("Fusión de Exposición");
         ExpFusionButton.setHorizontalAlignment(javax.swing.SwingConstants.CENTER);
-        ExpFusionButton.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                ExpFusionButtonActionPerformed(evt);
-            }
-        });
 
         GenerarButton.setText("Generar imagen HDR");
         GenerarButton.addActionListener(new java.awt.event.ActionListener() {
@@ -152,11 +158,11 @@ public class HDRGUI extends javax.swing.JFrame {
         ImgFPanel.setLayout(ImgFPanelLayout);
         ImgFPanelLayout.setHorizontalGroup(
             ImgFPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 569, Short.MAX_VALUE)
+            .addComponent(HDRScrollPane)
         );
         ImgFPanelLayout.setVerticalGroup(
             ImgFPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 252, Short.MAX_VALUE)
+            .addComponent(HDRScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout GenerarPanelLayout = new javax.swing.GroupLayout(GenerarPanel);
@@ -164,21 +170,19 @@ public class HDRGUI extends javax.swing.JFrame {
         GenerarPanelLayout.setHorizontalGroup(
             GenerarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(GenerarPanelLayout.createSequentialGroup()
-                .addGap(33, 33, 33)
-                .addGroup(GenerarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(GenerarPanelLayout.createSequentialGroup()
-                        .addGap(35, 35, 35)
-                        .addComponent(ModoEtiqueta, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(HDRTradButton, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(ExpFusionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(34, 34, 34)
-                        .addComponent(GenerarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(56, 56, 56))
-                    .addGroup(GenerarPanelLayout.createSequentialGroup()
-                        .addComponent(ImgFPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                        .addGap(39, 39, 39))))
+                .addGap(68, 68, 68)
+                .addComponent(ModoEtiqueta, javax.swing.GroupLayout.PREFERRED_SIZE, 53, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(HDRTradButton, javax.swing.GroupLayout.PREFERRED_SIZE, 124, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(ExpFusionButton, javax.swing.GroupLayout.PREFERRED_SIZE, 148, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(34, 34, 34)
+                .addComponent(GenerarButton, javax.swing.GroupLayout.PREFERRED_SIZE, 156, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(60, Short.MAX_VALUE))
+            .addGroup(GenerarPanelLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(ImgFPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addContainerGap())
         );
         GenerarPanelLayout.setVerticalGroup(
             GenerarPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -259,15 +263,60 @@ public class HDRGUI extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public BufferedImage mat2Img(Mat in){
+        BufferedImage out = new BufferedImage(in.width(), in.height(), BufferedImage.TYPE_3BYTE_BGR);
+        byte[] data = ((DataBufferByte) out.getRaster().getDataBuffer()).getData();
+        in.get(0, 0, data);
+        return out;
+    }
+
     private String getSelectedButtonText(ButtonGroup buttonGroup) {
         for (Enumeration<AbstractButton> buttons = buttonGroup.getElements(); buttons.hasMoreElements();) {
             AbstractButton button = buttons.nextElement();
-
             if (button.isSelected()) {
                 return button.getText();
             }
         }
         return null;
+    }
+
+    private void updateHDRImageGUI(BufferedImage imgMsc){
+        int mWidth, mHeight;
+        if(imgMsc.getWidth() > imgMsc.getHeight()){
+            mWidth = HDRScrollPane.getWidth() - 10;
+            mHeight = (int)(((double)mWidth / (double)imgMsc.getWidth()) * (double)imgMsc.getHeight());
+        }else{
+            mHeight = HDRScrollPane.getHeight() - 10;
+            mWidth = (int)(((double)mHeight / (double)imgMsc.getHeight()) * (double)imgMsc.getWidth());
+        }
+
+        BufferedImage myResize = new BufferedImage(mWidth, mHeight, imgMsc.getType());
+        Graphics2D g = myResize.createGraphics();
+        g.drawImage(imgMsc, 0, 0, mWidth, mHeight, null);
+        g.dispose();
+
+        ImageIcon icon = new ImageIcon(myResize);
+        // Adding the ImageIcon to the Label.
+        HDRImageLabel.setIcon( icon );
+        //Aligning the image to the center.
+        HDRImageLabel.setHorizontalAlignment(JLabel.CENTER);
+        //Adding the label to the Scrolling pane.
+        HDRScrollPane.getViewport().add(HDRImageLabel);
+        // Repainting the scroll pane to update the changes
+        HDRScrollPane.repaint();
+    }
+
+    private void Mertens(){
+        Mat fusion = new Mat();
+        MergeMertens mergeMertens = Photo.createMergeMertens();
+        AlignMTB myAlign = createAlignMTB();
+        myAlign.process(ld.myImages  , ld.myImages);
+        mergeMertens.process(ld.myImages, fusion);
+        fusion = fusion.mul(fusion, 255);
+//        Imgcodecs.imwrite("fusion.jpg", fusion);
+        fusion.convertTo(fusion, CV_8UC3);
+//        Imgcodecs.imwrite("fusion_rgb.jpg", fusion);
+        HDRImage = mat2Img(fusion);
     }
 
     private void BotonCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonCargarActionPerformed
@@ -285,17 +334,16 @@ public class HDRGUI extends javax.swing.JFrame {
         SecImagenesScrollPane.repaint();
     }//GEN-LAST:event_BotonCargarActionPerformed
 
-    private void ExpFusionButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_ExpFusionButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_ExpFusionButtonActionPerformed
-
     private void GenerarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GenerarButtonActionPerformed
-        // TODO add your handling code here:
+        switch(getSelectedButtonText(HDRSelectionGroup)){
+            case "HDR Tradicional":
+                break;
+            case "Fusión de Exposición":
+                Mertens();
+                updateHDRImageGUI(HDRImage);
+                break;
+        }
     }//GEN-LAST:event_GenerarButtonActionPerformed
-
-    private void HDRTradButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_HDRTradButtonActionPerformed
-        // TODO add your handling code here:
-    }//GEN-LAST:event_HDRTradButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -336,6 +384,7 @@ public class HDRGUI extends javax.swing.JFrame {
     private javax.swing.JRadioButton ExpFusionButton;
     private javax.swing.JButton GenerarButton;
     private javax.swing.JPanel GenerarPanel;
+    private javax.swing.JScrollPane HDRScrollPane;
     private javax.swing.ButtonGroup HDRSelectionGroup;
     private javax.swing.JRadioButton HDRTradButton;
     private javax.swing.JPanel ImgFPanel;
