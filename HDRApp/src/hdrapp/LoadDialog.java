@@ -35,7 +35,6 @@ public class LoadDialog extends javax.swing.JDialog {
     private JFileChooser fcOpen;
     private Mat[] myImages;
     private double[] myExpTimes;
-    private JLabel imageTestLabel;
     private JLabel[] imageLabels;
     private JPanel imagesPanel;
     
@@ -57,7 +56,6 @@ public class LoadDialog extends javax.swing.JDialog {
         imageLabels[2] = new JLabel();
         imageLabels[3] = new JLabel();
         imageLabels[4] = new JLabel();
-        imageTestLabel = new JLabel();
         imagesPanel = new JPanel();
         imagesPanel.setLayout(new FlowLayout());
         imagesPanel.add(imageLabels[0]);
@@ -362,12 +360,27 @@ public class LoadDialog extends javax.swing.JDialog {
         switch (n) {
             case 3:
                 ImgChooser4.setVisible(false);
+                imgPath4.setText("");
+                expTime4.setText("");
+                myImages[3] = null;
                 ImgChooser5.setVisible(false);
+                imgPath5.setText("");
+                expTime5.setText("");
+                myImages[4] = null;
+                imageLabels[3].setIcon( null );
+                imageLabels[4].setIcon( null );
                 break;
             case 4:
+                ImgChooser4.setVisible(true);
                 ImgChooser5.setVisible(false);
+                imgPath5.setText("");
+                expTime5.setText("");
+                myImages[4] = null;
+                imageLabels[4].setIcon( null );
                 break;
             default:
+                ImgChooser4.setVisible(true);
+                ImgChooser5.setVisible(true);
                 break;
         }
     }
@@ -381,6 +394,11 @@ public class LoadDialog extends javax.swing.JDialog {
     
     public JPanel getImageSequencePanel(){
         return imagesPanel;
+    }
+
+    public void setImageSequencePanel(JPanel pn){
+        imagesPanel = pn;
+        SecuenciaScrollPane.getViewport().add(imagesPanel);
     }
 
     private void updateSequenceImageGUI(BufferedImage imgMsc, int i){
@@ -478,6 +496,7 @@ public class LoadDialog extends javax.swing.JDialog {
 
     private void AceptarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AceptarButtonActionPerformed
         this.dispose();
+//        this.setVisible(false);
     }//GEN-LAST:event_AceptarButtonActionPerformed
 
     private void OpenImg1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OpenImg1ActionPerformed

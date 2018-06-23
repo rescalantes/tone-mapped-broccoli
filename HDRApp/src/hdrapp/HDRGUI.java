@@ -10,6 +10,7 @@ import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.opencv.core.Core;
 
@@ -22,6 +23,7 @@ public class HDRGUI extends javax.swing.JFrame {
 
     private final JFileChooser fcOpenPic;
     private LoadDialog ld;
+    private JPanel imgSecPanel;
     /**
      * Creates new form HDRGUI
      */
@@ -32,6 +34,7 @@ public class HDRGUI extends javax.swing.JFrame {
         fcOpenPic.addChoosableFileFilter(imagesFilter);
         fcOpenPic.setFileFilter(imagesFilter);
         ld = new LoadDialog(this, true);
+        imgSecPanel = null;
     }
 
     /**
@@ -271,11 +274,14 @@ public class HDRGUI extends javax.swing.JFrame {
         int n = (int)NumeroSecuencia.getValue();
         ld.setFileChooser(fcOpenPic);
         ld.setChoosers(n);
+        if(imgSecPanel != null){
+            ld.setImageSequencePanel(imgSecPanel);
+        }
         //Displaying JDialog to load Images
         ld.setVisible(true);
-
         // Updating the image sequence in the main GUI
-        SecImagenesScrollPane.getViewport().add(ld.getImageSequencePanel());
+        imgSecPanel = ld.getImageSequencePanel();
+        SecImagenesScrollPane.getViewport().add(imgSecPanel);
         SecImagenesScrollPane.repaint();
     }//GEN-LAST:event_BotonCargarActionPerformed
 
