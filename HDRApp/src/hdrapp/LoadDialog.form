@@ -29,9 +29,13 @@
               <Component id="AceptarButton" min="-2" max="-2" attributes="0"/>
               <EmptySpace max="32767" attributes="0"/>
           </Group>
-          <Group type="102" attributes="0">
+          <Group type="102" alignment="0" attributes="0">
               <EmptySpace min="20" pref="20" max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
+                  <Group type="102" attributes="0">
+                      <Component id="InstructionsLabel1" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="0" pref="0" max="32767" attributes="0"/>
+                  </Group>
                   <Group type="102" alignment="1" attributes="0">
                       <Component id="SecuenciaScrollPane" max="32767" attributes="0"/>
                       <EmptySpace min="-2" pref="22" max="-2" attributes="0"/>
@@ -41,7 +45,7 @@
                           <Component id="SequenceLabel" alignment="0" min="-2" max="-2" attributes="0"/>
                           <Group type="102" alignment="0" attributes="0">
                               <Component id="InstructionsLabel" min="-2" max="-2" attributes="0"/>
-                              <EmptySpace min="-2" pref="32" max="-2" attributes="0"/>
+                              <EmptySpace max="32767" attributes="0"/>
                               <Component id="expTimesLabel" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <Group type="103" alignment="0" groupAlignment="1" max="-2" attributes="0">
@@ -52,7 +56,7 @@
                               <Component id="ImgChooser1" alignment="0" max="32767" attributes="0"/>
                           </Group>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
+                      <EmptySpace pref="32" max="32767" attributes="0"/>
                   </Group>
               </Group>
           </Group>
@@ -66,7 +70,9 @@
                   <Component id="InstructionsLabel" alignment="3" min="-2" max="-2" attributes="0"/>
                   <Component id="expTimesLabel" alignment="3" min="-2" max="-2" attributes="0"/>
               </Group>
-              <EmptySpace type="unrelated" max="-2" attributes="0"/>
+              <EmptySpace min="-2" pref="2" max="-2" attributes="0"/>
+              <Component id="InstructionsLabel1" min="-2" max="-2" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
               <Component id="ImgChooser1" min="-2" max="-2" attributes="0"/>
               <EmptySpace type="unrelated" max="-2" attributes="0"/>
               <Component id="ImgChooser2" min="-2" max="-2" attributes="0"/>
@@ -90,7 +96,7 @@
   <SubComponents>
     <Component class="javax.swing.JLabel" name="InstructionsLabel">
       <Properties>
-        <Property name="text" type="java.lang.String" value="Instrucciones: Por favor seleccione las im&#xe1;genes en orden de menor a mayor tiempo de exposici&#xf3;n"/>
+        <Property name="text" type="java.lang.String" value="Instrucciones: Por favor seleccione las im&#xe1;genes en orden de menor a mayor"/>
       </Properties>
     </Component>
     <Component class="javax.swing.JLabel" name="SequenceLabel">
@@ -108,7 +114,7 @@
                   <Component id="imgPath1" min="-2" pref="236" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="OpenImg1" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="200" max="-2" attributes="0"/>
                   <Component id="expTime1" min="-2" pref="97" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -159,7 +165,7 @@
                   <Component id="imgPath2" min="-2" pref="236" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="OpenImg2" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="200" max="-2" attributes="0"/>
                   <Component id="expTime2" min="-2" pref="97" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -210,7 +216,7 @@
                   <Component id="imgPath3" min="-2" pref="236" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="OpenImg3" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="200" max="-2" attributes="0"/>
                   <Component id="expTime3" min="-2" pref="96" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -261,7 +267,7 @@
                   <Component id="imgPath4" min="-2" pref="236" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="OpenImg4" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="200" max="-2" attributes="0"/>
                   <Component id="expTime4" min="-2" pref="97" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -312,7 +318,7 @@
                   <Component id="imgPath5" min="-2" pref="236" max="-2" attributes="0"/>
                   <EmptySpace type="separate" max="-2" attributes="0"/>
                   <Component id="OpenImg5" min="-2" max="-2" attributes="0"/>
-                  <EmptySpace pref="156" max="32767" attributes="0"/>
+                  <EmptySpace min="-2" pref="200" max="-2" attributes="0"/>
                   <Component id="expTime5" min="-2" pref="97" max="-2" attributes="0"/>
                   <EmptySpace max="-2" attributes="0"/>
               </Group>
@@ -369,6 +375,11 @@
       <Events>
         <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="AceptarButtonActionPerformed"/>
       </Events>
+    </Component>
+    <Component class="javax.swing.JLabel" name="InstructionsLabel1">
+      <Properties>
+        <Property name="text" type="java.lang.String" value="tiempo de exposici&#xf3;n."/>
+      </Properties>
     </Component>
   </SubComponents>
 </Form>

@@ -8,7 +8,12 @@ package hdrapp;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferByte;
+import java.io.File;
+import java.io.IOException;
 import java.util.Enumeration;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.ImageIcon;
@@ -18,13 +23,20 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.opencv.core.Core;
+import org.opencv.core.CvType;
 import static org.opencv.core.CvType.*;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.photo.AlignMTB;
+import org.opencv.photo.CalibrateDebevec;
+import org.opencv.photo.MergeDebevec;
 import org.opencv.photo.MergeMertens;
 import org.opencv.photo.Photo;
 import static org.opencv.photo.Photo.createAlignMTB;
+import org.opencv.photo.TonemapDrago;
+import org.opencv.photo.TonemapDurand;
+import org.opencv.photo.TonemapMantiuk;
+import org.opencv.photo.TonemapReinhard;
 
 /**
  *
@@ -34,6 +46,7 @@ import static org.opencv.photo.Photo.createAlignMTB;
 public class HDRGUI extends javax.swing.JFrame {
 
     private final JFileChooser fcOpenPic;
+    private final JFileChooser fcSavePic;
     private LoadDialog ld;
     private JPanel imgSecPanel;
     private JLabel HDRImageLabel;
@@ -44,6 +57,7 @@ public class HDRGUI extends javax.swing.JFrame {
     public HDRGUI() {
         initComponents();
         fcOpenPic = new JFileChooser();
+        fcSavePic = new JFileChooser();
         FileNameExtensionFilter imagesFilter = new FileNameExtensionFilter("Imágenes: *.bmp, *.jpg, *.png", "bmp", "jpg", "png");
         fcOpenPic.addChoosableFileFilter(imagesFilter);
         fcOpenPic.setFileFilter(imagesFilter);
@@ -78,6 +92,12 @@ public class HDRGUI extends javax.swing.JFrame {
         ModoEtiqueta = new javax.swing.JLabel();
         ImgFPanel = new javax.swing.JPanel();
         HDRScrollPane = new javax.swing.JScrollPane();
+        BarraMenu = new javax.swing.JMenuBar();
+        MenuArchivo = new javax.swing.JMenu();
+        GuardarImagen = new javax.swing.JMenuItem();
+        MenuAyuda = new javax.swing.JMenu();
+        Leeme = new javax.swing.JMenuItem();
+        AcercaDe = new javax.swing.JMenuItem();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Generador de imágenes HDR | Por Rafael Vasquez y Raquel Escalante");
@@ -162,7 +182,7 @@ public class HDRGUI extends javax.swing.JFrame {
         );
         ImgFPanelLayout.setVerticalGroup(
             ImgFPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(HDRScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 252, Short.MAX_VALUE)
+            .addComponent(HDRScrollPane, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 230, Short.MAX_VALUE)
         );
 
         javax.swing.GroupLayout GenerarPanelLayout = new javax.swing.GroupLayout(GenerarPanel);
@@ -205,8 +225,10 @@ public class HDRGUI extends javax.swing.JFrame {
             .addGroup(AppPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(AppPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(GenerarPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addGroup(AppPanelLayout.createSequentialGroup()
                         .addGroup(AppPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(CargaEtiqueta)
                             .addComponent(BotonCargar)
                             .addGroup(AppPanelLayout.createSequentialGroup()
                                 .addGap(12, 12, 12)
@@ -214,32 +236,63 @@ public class HDRGUI extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                 .addComponent(NumeroSecuencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(SecImagenesScrollPane))
-                    .addComponent(GenerarPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(CargaEtiqueta))
+                        .addComponent(SecImagenesScrollPane)))
                 .addContainerGap())
         );
         AppPanelLayout.setVerticalGroup(
             AppPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(AppPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(CargaEtiqueta)
                 .addGroup(AppPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(AppPanelLayout.createSequentialGroup()
-                        .addGap(5, 5, 5)
-                        .addComponent(SecImagenesScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 104, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(18, 18, 18))
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, AppPanelLayout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(7, 7, 7)
+                        .addComponent(CargaEtiqueta)
+                        .addGap(18, 18, 18)
                         .addGroup(AppPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel2)
                             .addComponent(NumeroSecuencia, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(BotonCargar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(37, 37, 37)))
+                        .addGap(18, 18, 18)
+                        .addComponent(BotonCargar, javax.swing.GroupLayout.PREFERRED_SIZE, 39, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(SecImagenesScrollPane, javax.swing.GroupLayout.PREFERRED_SIZE, 128, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(GenerarPanel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addContainerGap())
         );
+
+        MenuArchivo.setText("Archivo");
+
+        GuardarImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hdrapp/Save16.gif"))); // NOI18N
+        GuardarImagen.setText("Guardar Archivo");
+        GuardarImagen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                GuardarImagenActionPerformed(evt);
+            }
+        });
+        MenuArchivo.add(GuardarImagen);
+
+        BarraMenu.add(MenuArchivo);
+
+        MenuAyuda.setText("Ayuda");
+
+        Leeme.setText("Léeme");
+        Leeme.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                LeemeActionPerformed(evt);
+            }
+        });
+        MenuAyuda.add(Leeme);
+
+        AcercaDe.setText("Acerca De...");
+        AcercaDe.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                AcercaDeActionPerformed(evt);
+            }
+        });
+        MenuAyuda.add(AcercaDe);
+
+        BarraMenu.add(MenuAyuda);
+
+        setJMenuBar(BarraMenu);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -306,6 +359,42 @@ public class HDRGUI extends javax.swing.JFrame {
         HDRScrollPane.repaint();
     }
 
+    private void TraditionalHDR(){     
+        //Create first a Mat for Camera Response Function, and a Debevec calibrator
+        Mat response = new Mat();
+        CalibrateDebevec calibrate = Photo.createCalibrateDebevec();
+        Mat matTimes = new Mat(ld.myExpTimes.size(), 1, CvType.CV_32F);
+        double[] arrayTimes = new double[(int) (matTimes.total()*matTimes.channels())];
+        for (int i = 0; i < ld.myExpTimes.size(); i++) {
+            arrayTimes[i] = ld.myExpTimes.get(i);
+        }
+        
+        //Calibrate the images according to CRF using the Debevec Calibrator
+        matTimes.put(0, 0, arrayTimes);
+        calibrate.process(ld.myImages, response, matTimes);
+        
+        //Aligning process
+        AlignMTB myAlign = createAlignMTB();
+        myAlign.process(ld.myImages  , ld.myImages);
+        
+        //HDR image creation
+        Mat hdr = new Mat();
+        MergeDebevec mergeDebevec = Photo.createMergeDebevec();
+        mergeDebevec.process(ld.myImages, hdr, matTimes);
+        
+        //LDR image creation
+        Mat ldr = new Mat();
+        TonemapDrago tonemap = Photo.createTonemapDrago();
+        tonemap.setGamma(1.5f);
+        tonemap.process(hdr, ldr);
+        
+        //Final Image Processing
+        ldr = ldr.mul(ldr, 255);
+        ldr.convertTo(ldr, CV_8UC3);
+        HDRImage = mat2Img(ldr);
+
+    }
+    
     private void Mertens(){
         Mat fusion = new Mat();
         MergeMertens mergeMertens = Photo.createMergeMertens();
@@ -318,6 +407,8 @@ public class HDRGUI extends javax.swing.JFrame {
 //        Imgcodecs.imwrite("fusion_rgb.jpg", fusion);
         HDRImage = mat2Img(fusion);
     }
+    
+    
 
     private void BotonCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonCargarActionPerformed
         int n = (int)NumeroSecuencia.getValue();
@@ -332,18 +423,62 @@ public class HDRGUI extends javax.swing.JFrame {
         imgSecPanel = ld.getImageSequencePanel();
         SecImagenesScrollPane.getViewport().add(imgSecPanel);
         SecImagenesScrollPane.repaint();
+        Estado.setText("Imágenes de secuencia cargadas.");
     }//GEN-LAST:event_BotonCargarActionPerformed
 
     private void GenerarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GenerarButtonActionPerformed
+        Estado.setText("Aplicando HDR.");
         switch(getSelectedButtonText(HDRSelectionGroup)){
             case "HDR Tradicional":
+                TraditionalHDR();
+                updateHDRImageGUI(HDRImage);
+                Estado.setText("HDR Tradicional aplicado.");
                 break;
-            case "Fusión de Exposición":
+            case "Fusión de Exposición":                
                 Mertens();
                 updateHDRImageGUI(HDRImage);
+                Estado.setText("Fusión de exposición aplicada.");
                 break;
         }
     }//GEN-LAST:event_GenerarButtonActionPerformed
+
+    private void LeemeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_LeemeActionPerformed
+        Runtime rt = Runtime.getRuntime();
+        String readme = ("README.txt");
+        try {
+            Process p = rt.exec("notepad "+readme);
+        } catch (IOException ex) {
+            Logger.getLogger(HDRGUI.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }//GEN-LAST:event_LeemeActionPerformed
+
+    private void AcercaDeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AcercaDeActionPerformed
+        JOptionPane.showMessageDialog(this, "Generador de Imágenes HDR\nRaquel Escalante y Rafael Vasquez\nSemestre 2-2017\nProcesamiento Digital De Imágenes", "Acerca de", JOptionPane.INFORMATION_MESSAGE);
+    }//GEN-LAST:event_AcercaDeActionPerformed
+
+    private void GuardarImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuardarImagenActionPerformed
+        int returnVal;
+        if ( HDRImage != null ){
+            returnVal = fcSavePic.showSaveDialog(this);
+        }else{
+            JOptionPane.showMessageDialog(this, "¡ERROR: Cargue una imagen primero!");
+            return;
+        }
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            try {
+                File file = fcSavePic.getSelectedFile();
+                // Getting the image extension.
+                String path = file.getAbsolutePath();
+                String extension = path.substring(path.length() - 3);
+                if ("bmp".equals(extension) || "png".equals(extension) || "jpg".equals(extension)){
+                    ImageIO.write(HDRImage, extension, new File(fcSavePic.getSelectedFile().getAbsolutePath()));
+                    Estado.setText("Imagen guardada en: " + fcSavePic.getSelectedFile().getAbsolutePath());
+                }
+            } catch ( IOException e) {
+                JOptionPane.showMessageDialog(this, "¡ERROR: Ocurrio un error al guardar el archivo!");
+            }
+        }
+    }//GEN-LAST:event_GuardarImagenActionPerformed
 
     /**
      * @param args the command line arguments
@@ -375,19 +510,25 @@ public class HDRGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem AcercaDe;
     private javax.swing.JPanel AppPanel;
     private javax.swing.JPanel BarraEstado;
     private javax.swing.JPanel BarraEstadoPanel;
+    private javax.swing.JMenuBar BarraMenu;
     private javax.swing.JButton BotonCargar;
     private javax.swing.JLabel CargaEtiqueta;
     private javax.swing.JLabel Estado;
     private javax.swing.JRadioButton ExpFusionButton;
     private javax.swing.JButton GenerarButton;
     private javax.swing.JPanel GenerarPanel;
+    private javax.swing.JMenuItem GuardarImagen;
     private javax.swing.JScrollPane HDRScrollPane;
     private javax.swing.ButtonGroup HDRSelectionGroup;
     private javax.swing.JRadioButton HDRTradButton;
     private javax.swing.JPanel ImgFPanel;
+    private javax.swing.JMenuItem Leeme;
+    private javax.swing.JMenu MenuArchivo;
+    private javax.swing.JMenu MenuAyuda;
     private javax.swing.JLabel ModoEtiqueta;
     private javax.swing.JSpinner NumeroSecuencia;
     private javax.swing.JScrollPane SecImagenesScrollPane;
