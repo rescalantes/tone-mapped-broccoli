@@ -21,6 +21,7 @@ import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
@@ -33,6 +34,7 @@ import org.opencv.photo.MergeDebevec;
 import org.opencv.photo.MergeMertens;
 import org.opencv.photo.Photo;
 import static org.opencv.photo.Photo.createAlignMTB;
+import org.opencv.photo.Tonemap;
 import org.opencv.photo.TonemapDrago;
 import org.opencv.photo.TonemapDurand;
 import org.opencv.photo.TonemapMantiuk;
@@ -51,6 +53,8 @@ public class HDRGUI extends javax.swing.JFrame {
     private JPanel imgSecPanel;
     private JLabel HDRImageLabel;
     private BufferedImage HDRImage;
+    private String ToneMap;
+
     /**
      * Creates new form HDRGUI
      */
@@ -64,6 +68,7 @@ public class HDRGUI extends javax.swing.JFrame {
         ld = new LoadDialog(this, true);
         imgSecPanel = null;
         HDRImageLabel = new JLabel();
+        ToneMap = "Reinhard";
     }
 
     /**
@@ -95,6 +100,8 @@ public class HDRGUI extends javax.swing.JFrame {
         BarraMenu = new javax.swing.JMenuBar();
         MenuArchivo = new javax.swing.JMenu();
         GuardarImagen = new javax.swing.JMenuItem();
+        MenuOpciones = new javax.swing.JMenu();
+        MapeoTonos = new javax.swing.JMenuItem();
         MenuAyuda = new javax.swing.JMenu();
         Leeme = new javax.swing.JMenuItem();
         AcercaDe = new javax.swing.JMenuItem();
@@ -272,6 +279,18 @@ public class HDRGUI extends javax.swing.JFrame {
 
         BarraMenu.add(MenuArchivo);
 
+        MenuOpciones.setText("Opciones");
+
+        MapeoTonos.setText("Mapeo de Tonos");
+        MapeoTonos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                MapeoTonosActionPerformed(evt);
+            }
+        });
+        MenuOpciones.add(MapeoTonos);
+
+        BarraMenu.add(MenuOpciones);
+
         MenuAyuda.setText("Ayuda");
 
         Leeme.setText("Léeme");
@@ -359,6 +378,29 @@ public class HDRGUI extends javax.swing.JFrame {
         HDRScrollPane.repaint();
     }
 
+    private Tonemap getCurrentTonemap(){
+        Tonemap mytm = null;
+        switch(ToneMap){
+            case "Reinhard":
+                mytm = Photo.createTonemapReinhard();
+                break;
+            case "Drago":
+                mytm = Photo.createTonemapDrago();
+                mytm.setGamma(1.5f);
+                break;
+            case "Durand":
+                mytm = Photo.createTonemapDurand();
+                mytm.setGamma(2.2f);
+                break;
+            case "Mantiuk":
+                mytm = Photo.createTonemapMantiuk();
+                mytm.setGamma(2.0f);
+                break;
+        }
+
+        return mytm;
+    }
+
     private void TraditionalHDR(){     
         //Create first a Mat for Camera Response Function, and a Debevec calibrator
         Mat response = new Mat();
@@ -368,24 +410,26 @@ public class HDRGUI extends javax.swing.JFrame {
         for (int i = 0; i < ld.myExpTimes.size(); i++) {
             arrayTimes[i] = ld.myExpTimes.get(i);
         }
-        
+
         //Calibrate the images according to CRF using the Debevec Calibrator
         matTimes.put(0, 0, arrayTimes);
         calibrate.process(ld.myImages, response, matTimes);
-        
+
         //Aligning process
         AlignMTB myAlign = createAlignMTB();
         myAlign.process(ld.myImages  , ld.myImages);
-        
+
         //HDR image creation
         Mat hdr = new Mat();
         MergeDebevec mergeDebevec = Photo.createMergeDebevec();
         mergeDebevec.process(ld.myImages, hdr, matTimes);
-        
+
         //LDR image creation
         Mat ldr = new Mat();
-        TonemapDrago tonemap = Photo.createTonemapDrago();
-        tonemap.setGamma(1.5f);
+//        TonemapDrago tonemap = Photo.createTonemapDrago();
+//        TonemapReinhard tonemap = Photo.createTonemapReinhard();
+        Tonemap tonemap = getCurrentTonemap();
+        //tonemap.setGamma(2.2f);
         tonemap.process(hdr, ldr);
         
         //Final Image Processing
@@ -394,7 +438,7 @@ public class HDRGUI extends javax.swing.JFrame {
         HDRImage = mat2Img(ldr);
 
     }
-    
+
     private void Mertens(){
         Mat fusion = new Mat();
         MergeMertens mergeMertens = Photo.createMergeMertens();
@@ -407,8 +451,6 @@ public class HDRGUI extends javax.swing.JFrame {
 //        Imgcodecs.imwrite("fusion_rgb.jpg", fusion);
         HDRImage = mat2Img(fusion);
     }
-    
-    
 
     private void BotonCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonCargarActionPerformed
         int n = (int)NumeroSecuencia.getValue();
@@ -461,7 +503,7 @@ public class HDRGUI extends javax.swing.JFrame {
         if ( HDRImage != null ){
             returnVal = fcSavePic.showSaveDialog(this);
         }else{
-            JOptionPane.showMessageDialog(this, "¡ERROR: Cargue una imagen primero!");
+            JOptionPane.showMessageDialog(this, "¡ERROR: Debe generar una imagen HDR primero!");
             return;
         }
         if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -479,6 +521,58 @@ public class HDRGUI extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_GuardarImagenActionPerformed
+
+    private void MapeoTonosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MapeoTonosActionPerformed
+        JRadioButton DurandButton = new JRadioButton("Durand");
+        JRadioButton ReinhardButton = new JRadioButton("Reinhard");
+        JRadioButton DragoButton = new JRadioButton("Drago");
+        JRadioButton MantiukButton = new JRadioButton("Mantiuk");
+        ButtonGroup tonemapBGroup = new ButtonGroup();
+        JPanel panel1 = new JPanel();
+
+        tonemapBGroup.add(DurandButton);
+        tonemapBGroup.add(ReinhardButton);
+        tonemapBGroup.add(DragoButton);
+        tonemapBGroup.add(MantiukButton);
+
+        switch(ToneMap){
+            case "Reinhard":
+                ReinhardButton.setSelected(true);
+                break;
+            case "Drago":
+                DragoButton.setSelected(true);
+                break;
+            case "Durand":
+                DurandButton.setSelected(true);
+                break;
+            case "Mantiuk":
+                MantiukButton.setSelected(true);
+                break;
+        }
+
+        panel1.add(DurandButton);
+        panel1.add(MantiukButton);
+        panel1.add(DragoButton);
+        panel1.add(ReinhardButton);
+
+        Object[] params = {"Filtros de Mapeo de Tonos:", panel1};
+        Object[] options = {"Aceptar", "Cancelar"};
+        int result = JOptionPane.showOptionDialog(  HDRScrollPane,
+            params,
+            "Opciones de Mapeo de Tono",
+            JOptionPane.YES_NO_OPTION,
+            JOptionPane.QUESTION_MESSAGE,
+            null,           // Don't use a custom Icon
+            options,        // The strings of buttons
+            options[0]);    // Default button title
+
+        //If the operation was canceled do nothing.
+        if (result == JOptionPane.NO_OPTION){
+            return;
+        }
+        ToneMap = getSelectedButtonText( tonemapBGroup );
+        Estado.setText("Mapeo de Tonos Actual: " + ToneMap);
+    }//GEN-LAST:event_MapeoTonosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -527,8 +621,10 @@ public class HDRGUI extends javax.swing.JFrame {
     private javax.swing.JRadioButton HDRTradButton;
     private javax.swing.JPanel ImgFPanel;
     private javax.swing.JMenuItem Leeme;
+    private javax.swing.JMenuItem MapeoTonos;
     private javax.swing.JMenu MenuArchivo;
     private javax.swing.JMenu MenuAyuda;
+    private javax.swing.JMenu MenuOpciones;
     private javax.swing.JLabel ModoEtiqueta;
     private javax.swing.JSpinner NumeroSecuencia;
     private javax.swing.JScrollPane SecImagenesScrollPane;
