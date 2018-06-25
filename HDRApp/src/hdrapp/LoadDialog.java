@@ -23,6 +23,7 @@ import java.util.logging.Logger;
 import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import org.opencv.core.Mat;
 import org.opencv.imgcodecs.Imgcodecs;
@@ -55,7 +56,7 @@ public class LoadDialog extends javax.swing.JDialog {
 
         myImages = new ArrayList<>();
         for (int i = 0; i < 5; i++){
-            Mat aux = new Mat();
+            Mat aux = null;
             myImages.add(aux);
         }
 
@@ -375,7 +376,7 @@ public class LoadDialog extends javax.swing.JDialog {
     public void setFileChooser(JFileChooser fc){
         fcOpen = fc;
     }
-    
+
     public void setChoosers(int n){
         numSec = n;
         while(myImages.size() > n){
@@ -383,7 +384,7 @@ public class LoadDialog extends javax.swing.JDialog {
             myExpTimes.remove(myExpTimes.size() - 1);
         }
         while(myImages.size() < n){
-            Mat aux = new Mat();
+            Mat aux = null;
             myImages.add(aux);
             myExpTimes.add(0.0);
         }
@@ -411,14 +412,7 @@ public class LoadDialog extends javax.swing.JDialog {
                 break;
         }
     }
-    
-    private BufferedImage mat2Img(Mat in){
-        BufferedImage out = new BufferedImage(in.width(), in.height(), BufferedImage.TYPE_3BYTE_BGR);
-        byte[] data = ((DataBufferByte) out.getRaster().getDataBuffer()).getData();
-        in.get(0, 0, data);
-        return out;
-    } 
-    
+
     public JPanel getImageSequencePanel(){
         return imagesPanel;
     }
@@ -426,6 +420,51 @@ public class LoadDialog extends javax.swing.JDialog {
     public void setImageSequencePanel(JPanel pn){
         imagesPanel = pn;
         SecuenciaScrollPane.getViewport().add(imagesPanel);
+    }
+
+    public boolean areImagesLoaded(){
+        for (Mat i:myImages){
+            if(i == null)
+                return false;
+        }
+        return true;
+    }
+
+    public boolean areImagesSameDimension(){
+        int width = 0;
+        int height = 0;
+        if(myImages.get(0) != null){
+            width = myImages.get(0).width();
+            height = myImages.get(0).height();
+        }
+        for (Mat i:myImages){
+            if(i.width() != width || i.height() != height)
+                return false;
+        }
+        return true;
+    }
+
+    public boolean areExposureTimesLoaded(){
+        for (Double i:myExpTimes){
+            if(i == 0.0)
+                return false;
+        }
+        return true;
+    }
+
+    private BufferedImage mat2Img(Mat in){
+        BufferedImage out = new BufferedImage(in.width(), in.height(), BufferedImage.TYPE_3BYTE_BGR);
+        byte[] data = ((DataBufferByte) out.getRaster().getDataBuffer()).getData();
+        in.get(0, 0, data);
+        return out;
+    }
+
+    private boolean areExposureTimesOrdered(){
+        for (int i = 0; i < myExpTimes.size() - 1 ; i++){
+            if( myExpTimes.get(i) >= myExpTimes.get(i+1) )
+                return false;
+        }
+        return true;
     }
 
     private void updateSequenceImageGUI(BufferedImage imgMsc, int i){
@@ -469,7 +508,7 @@ public class LoadDialog extends javax.swing.JDialog {
                 break;
         }
     }
-    
+
     private void updateGUIImageExposureTime(int i, String time){
         switch(i){
             case 0:
@@ -520,8 +559,15 @@ public class LoadDialog extends javax.swing.JDialog {
     }
 
     private void AceptarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_AceptarButtonActionPerformed
-        this.dispose();
-//        this.setVisible(false);
+        if(areExposureTimesLoaded()){
+            if( areExposureTimesOrdered()){
+                this.dispose();
+            }else{
+                JOptionPane.showMessageDialog(this, "Las imágenes no están ordenadas por tiempo de exposición.", "Error de Carga de Imágenes", JOptionPane.ERROR_MESSAGE);
+            }
+        }else{
+            this.dispose();
+        }
     }//GEN-LAST:event_AceptarButtonActionPerformed
 
     private void OpenImg1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_OpenImg1ActionPerformed

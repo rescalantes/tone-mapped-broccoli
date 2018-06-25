@@ -53,6 +53,7 @@ public class HDRGUI extends javax.swing.JFrame {
     private JPanel imgSecPanel;
     private JLabel HDRImageLabel;
     private BufferedImage HDRImage;
+    private Mat HDRfile;
     private String ToneMap;
 
     /**
@@ -69,6 +70,7 @@ public class HDRGUI extends javax.swing.JFrame {
         imgSecPanel = null;
         HDRImageLabel = new JLabel();
         ToneMap = "Reinhard";
+        HDRfile = null;
     }
 
     /**
@@ -99,7 +101,8 @@ public class HDRGUI extends javax.swing.JFrame {
         HDRScrollPane = new javax.swing.JScrollPane();
         BarraMenu = new javax.swing.JMenuBar();
         MenuArchivo = new javax.swing.JMenu();
-        GuardarImagen = new javax.swing.JMenuItem();
+        GuardarImagenLDR = new javax.swing.JMenuItem();
+        GuardarImagenHDR = new javax.swing.JMenuItem();
         MenuOpciones = new javax.swing.JMenu();
         MapeoTonos = new javax.swing.JMenuItem();
         MenuAyuda = new javax.swing.JMenu();
@@ -268,14 +271,22 @@ public class HDRGUI extends javax.swing.JFrame {
 
         MenuArchivo.setText("Archivo");
 
-        GuardarImagen.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hdrapp/Save16.gif"))); // NOI18N
-        GuardarImagen.setText("Guardar Archivo");
-        GuardarImagen.addActionListener(new java.awt.event.ActionListener() {
+        GuardarImagenLDR.setIcon(new javax.swing.ImageIcon(getClass().getResource("/hdrapp/Save16.gif"))); // NOI18N
+        GuardarImagenLDR.setText("Guardar Archivo LDR");
+        GuardarImagenLDR.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                GuardarImagenActionPerformed(evt);
+                GuardarImagenLDRActionPerformed(evt);
             }
         });
-        MenuArchivo.add(GuardarImagen);
+        MenuArchivo.add(GuardarImagenLDR);
+
+        GuardarImagenHDR.setText("Guardar Archivo HDR");
+        GuardarImagenHDR.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                GuardarImagenHDRActionPerformed(evt);
+            }
+        });
+        MenuArchivo.add(GuardarImagenHDR);
 
         BarraMenu.add(MenuArchivo);
 
@@ -354,13 +365,9 @@ public class HDRGUI extends javax.swing.JFrame {
 
     private void updateHDRImageGUI(BufferedImage imgMsc){
         int mWidth, mHeight;
-        if(imgMsc.getWidth() > imgMsc.getHeight()){
-            mWidth = HDRScrollPane.getWidth() - 10;
-            mHeight = (int)(((double)mWidth / (double)imgMsc.getWidth()) * (double)imgMsc.getHeight());
-        }else{
-            mHeight = HDRScrollPane.getHeight() - 10;
-            mWidth = (int)(((double)mHeight / (double)imgMsc.getHeight()) * (double)imgMsc.getWidth());
-        }
+
+        mHeight = HDRScrollPane.getHeight() - 16; // 16 is the margin of the scrollPane
+        mWidth = (int)(((double)mHeight / (double)imgMsc.getHeight()) * (double)imgMsc.getWidth());
 
         BufferedImage myResize = new BufferedImage(mWidth, mHeight, imgMsc.getType());
         Graphics2D g = myResize.createGraphics();
@@ -402,7 +409,7 @@ public class HDRGUI extends javax.swing.JFrame {
     }
 
     private void TraditionalHDR(){     
-        //Create first a Mat for Camera Response Function, and a Debevec calibrator
+        //First create a Mat for Camera Response Function, and a Debevec calibrator
         Mat response = new Mat();
         CalibrateDebevec calibrate = Photo.createCalibrateDebevec();
         Mat matTimes = new Mat(ld.myExpTimes.size(), 1, CvType.CV_32F);
@@ -428,6 +435,7 @@ public class HDRGUI extends javax.swing.JFrame {
         Mat ldr = new Mat();
 //        TonemapDrago tonemap = Photo.createTonemapDrago();
 //        TonemapReinhard tonemap = Photo.createTonemapReinhard();
+        HDRfile = hdr;
         Tonemap tonemap = getCurrentTonemap();
         //tonemap.setGamma(2.2f);
         tonemap.process(hdr, ldr);
@@ -436,6 +444,8 @@ public class HDRGUI extends javax.swing.JFrame {
         ldr = ldr.mul(ldr, 255);
         ldr.convertTo(ldr, CV_8UC3);
         HDRImage = mat2Img(ldr);
+        //Saving .hdr image
+//        Imgcodecs.imwrite("Resultado.hdr", hdr);
 
     }
 
@@ -450,6 +460,7 @@ public class HDRGUI extends javax.swing.JFrame {
         fusion.convertTo(fusion, CV_8UC3);
 //        Imgcodecs.imwrite("fusion_rgb.jpg", fusion);
         HDRImage = mat2Img(fusion);
+        HDRfile = null;
     }
 
     private void BotonCargarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_BotonCargarActionPerformed
@@ -465,22 +476,38 @@ public class HDRGUI extends javax.swing.JFrame {
         imgSecPanel = ld.getImageSequencePanel();
         SecImagenesScrollPane.getViewport().add(imgSecPanel);
         SecImagenesScrollPane.repaint();
+
+        if(!ld.areExposureTimesLoaded()){
+            JOptionPane.showMessageDialog(this, "Faltan tiempos de exposición, solo podrá usar Fusión de Exposición.", "Advertencia de Generación de HDR", JOptionPane.WARNING_MESSAGE);
+            HDRTradButton.setEnabled(false);
+            ExpFusionButton.setSelected(true);
+        }else{
+            HDRTradButton.setEnabled(true);
+        }
         Estado.setText("Imágenes de secuencia cargadas.");
     }//GEN-LAST:event_BotonCargarActionPerformed
 
     private void GenerarButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GenerarButtonActionPerformed
-        Estado.setText("Aplicando HDR.");
-        switch(getSelectedButtonText(HDRSelectionGroup)){
-            case "HDR Tradicional":
-                TraditionalHDR();
-                updateHDRImageGUI(HDRImage);
-                Estado.setText("HDR Tradicional aplicado.");
-                break;
-            case "Fusión de Exposición":                
-                Mertens();
-                updateHDRImageGUI(HDRImage);
-                Estado.setText("Fusión de exposición aplicada.");
-                break;
+        if(ld.areImagesLoaded()){
+            if(ld.areImagesSameDimension()){
+                Estado.setText("Aplicando HDR.");
+                switch(getSelectedButtonText(HDRSelectionGroup)){
+                    case "HDR Tradicional":
+                        TraditionalHDR();
+                        updateHDRImageGUI(HDRImage);
+                        Estado.setText("HDR Tradicional aplicado.");
+                        break;
+                    case "Fusión de Exposición":
+                        Mertens();
+                        updateHDRImageGUI(HDRImage);
+                        Estado.setText("Fusión de exposición aplicada.");
+                        break;
+                }
+            }else{
+                JOptionPane.showMessageDialog(this, "Las imágenes de la secuencia no tienen las mismas dimensiones.", "Error de Generación de HDR", JOptionPane.ERROR_MESSAGE);
+            }
+        }else{
+            JOptionPane.showMessageDialog(this, "Faltan imágenes por cargar en la secuencia.", "Error de Generación de HDR", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_GenerarButtonActionPerformed
 
@@ -498,12 +525,12 @@ public class HDRGUI extends javax.swing.JFrame {
         JOptionPane.showMessageDialog(this, "Generador de Imágenes HDR\nRaquel Escalante y Rafael Vasquez\nSemestre 2-2017\nProcesamiento Digital De Imágenes", "Acerca de", JOptionPane.INFORMATION_MESSAGE);
     }//GEN-LAST:event_AcercaDeActionPerformed
 
-    private void GuardarImagenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuardarImagenActionPerformed
+    private void GuardarImagenLDRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuardarImagenLDRActionPerformed
         int returnVal;
         if ( HDRImage != null ){
             returnVal = fcSavePic.showSaveDialog(this);
         }else{
-            JOptionPane.showMessageDialog(this, "¡ERROR: Debe generar una imagen HDR primero!");
+            JOptionPane.showMessageDialog(this, "¡ERROR: Debe generar una imagen HDR primero!", "Error de guardado", JOptionPane.ERROR_MESSAGE);
             return;
         }
         if (returnVal == JFileChooser.APPROVE_OPTION) {
@@ -515,12 +542,14 @@ public class HDRGUI extends javax.swing.JFrame {
                 if ("bmp".equals(extension) || "png".equals(extension) || "jpg".equals(extension)){
                     ImageIO.write(HDRImage, extension, new File(fcSavePic.getSelectedFile().getAbsolutePath()));
                     Estado.setText("Imagen guardada en: " + fcSavePic.getSelectedFile().getAbsolutePath());
+                }else{
+                    JOptionPane.showMessageDialog(this, "¡ERROR: La terminación del archivo debe ser .bmp, .png o .jpg!", "Error de guardado", JOptionPane.ERROR_MESSAGE);
                 }
             } catch ( IOException e) {
-                JOptionPane.showMessageDialog(this, "¡ERROR: Ocurrio un error al guardar el archivo!");
+                JOptionPane.showMessageDialog(this, "¡ERROR: Ocurrio un error al guardar el archivo!", "Error de guardado", JOptionPane.ERROR_MESSAGE);
             }
         }
-    }//GEN-LAST:event_GuardarImagenActionPerformed
+    }//GEN-LAST:event_GuardarImagenLDRActionPerformed
 
     private void MapeoTonosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_MapeoTonosActionPerformed
         JRadioButton DurandButton = new JRadioButton("Durand");
@@ -574,6 +603,28 @@ public class HDRGUI extends javax.swing.JFrame {
         Estado.setText("Mapeo de Tonos Actual: " + ToneMap);
     }//GEN-LAST:event_MapeoTonosActionPerformed
 
+    private void GuardarImagenHDRActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_GuardarImagenHDRActionPerformed
+        int returnVal;
+        if ( HDRfile != null ){
+            returnVal = fcSavePic.showSaveDialog(this);
+        }else{
+            JOptionPane.showMessageDialog(this, "¡ERROR: Debe generar una imagen HDR Tradicional !", "Error de guardado", JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fcSavePic.getSelectedFile();
+            // Getting the image extension.
+            String path = file.getAbsolutePath();
+            String extension = path.substring(path.length() - 3);
+            if ("hdr".equals(extension) ){
+                Imgcodecs.imwrite(path, HDRfile);
+                Estado.setText("Imagen guardada en: " + fcSavePic.getSelectedFile().getAbsolutePath());
+            }else{
+                JOptionPane.showMessageDialog(this, "¡ERROR: La terminación del archivo debe ser .hdr!" , "Error de guardado", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }//GEN-LAST:event_GuardarImagenHDRActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -615,7 +666,8 @@ public class HDRGUI extends javax.swing.JFrame {
     private javax.swing.JRadioButton ExpFusionButton;
     private javax.swing.JButton GenerarButton;
     private javax.swing.JPanel GenerarPanel;
-    private javax.swing.JMenuItem GuardarImagen;
+    private javax.swing.JMenuItem GuardarImagenHDR;
+    private javax.swing.JMenuItem GuardarImagenLDR;
     private javax.swing.JScrollPane HDRScrollPane;
     private javax.swing.ButtonGroup HDRSelectionGroup;
     private javax.swing.JRadioButton HDRTradButton;

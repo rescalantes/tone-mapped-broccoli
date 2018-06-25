@@ -11,15 +11,23 @@
             <Property name="text" type="java.lang.String" value="Archivo"/>
           </Properties>
           <SubComponents>
-            <MenuItem class="javax.swing.JMenuItem" name="GuardarImagen">
+            <MenuItem class="javax.swing.JMenuItem" name="GuardarImagenLDR">
               <Properties>
                 <Property name="icon" type="javax.swing.Icon" editor="org.netbeans.modules.form.editors2.IconEditor">
                   <Image iconType="3" name="/hdrapp/Save16.gif"/>
                 </Property>
-                <Property name="text" type="java.lang.String" value="Guardar Archivo"/>
+                <Property name="text" type="java.lang.String" value="Guardar Archivo LDR"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="GuardarImagenActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="GuardarImagenLDRActionPerformed"/>
+              </Events>
+            </MenuItem>
+            <MenuItem class="javax.swing.JMenuItem" name="GuardarImagenHDR">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Guardar Archivo HDR"/>
+              </Properties>
+              <Events>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="GuardarImagenHDRActionPerformed"/>
               </Events>
             </MenuItem>
           </SubComponents>
